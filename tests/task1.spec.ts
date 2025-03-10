@@ -1,52 +1,57 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect } from '@playwright/test';
+import { Registration } from '../pages/Registration';
+import { HomePage } from '../pages/HomePage';
+
+const BASE_URL = 'https://guest:welcome2qauto@qauto.forstudy.space';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://guest:welcome2qauto@qauto.forstudy.space')
-  await page.getByRole('button', { name: 'Sign In' }).click()
-  await page.getByRole('button', { name: 'Registration' }).click()
+    const homePage = new HomePage(page);
+    await homePage.goto(BASE_URL);
+    await homePage.clickSignIn();
+    await homePage.clickRegister();
 })
 
-test.describe('positive login test', () => {
-    test('should successfully register a new user', async ({ page }) => {
-      await page.fill('input[name="name"]', 'John')
-      await page.fill('input[name="lastName"]', 'Doe')
-      await page.fill('input[name="email"]', `aqa-${Date.now()}@test.com`)
-      await page.fill('input[name="password"]', 'Password123')
-      await page.fill('input[name="repeatPassword"]', 'Password123')
-      await page.getByRole('button', { name: 'Register' }).click()
+test.describe('positive registration test', () => {
+  test('should successfully register a new user', async ({ page }) => {
+    const registration = new Registration(page);
+    await registration.registerUser('John', 'Doe', `aqa-${Date.now()}@test.com`, 'Password123', 'Password123');
     })
 })
 
 test.describe('negative registration form tests', () => {
   test('should keep the Register button disabled when all fields are empty', async ({ page }) => {
-        const registerButton = page.getByRole('button', { name: 'Register' })
-        await expect(registerButton).toBeDisabled()
+    const registration = new Registration(page);
+    await expect(registration.registerButton).toBeDisabled();
     })
 
   test('should show error for invalid email', async ({ page }) => {
-    await page.fill('input[name="email"]', 'invalid-email')
-    await page.click('body')
-    await expect(page.locator('text=Email is incorrect')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Register' })).toBeDisabled()
+    const registration = new Registration(page);
+    await registration.emailInput.fill('invalid-email');
+    await page.click('body');
+    await expect(registration.emailError).toBeVisible();
+    await expect(registration.registerButton).toBeDisabled();
     })
 
   test('should show error for too short password', async ({ page }) => {
-      await page.fill('input[name="password"]', 'Pass1')
-      await page.click('body')
-      await expect(page.locator('text=Password has to be from 8 to 15 characters long')).toBeVisible()
-      await expect(page.getByRole('button', { name: 'Register' })).toBeDisabled()
+    const registration = new Registration(page);
+    await registration.passwordInput.fill('Pass1');
+    await page.click('body');
+    await expect(registration.passwordError).toBeVisible();
+    await expect(registration.registerButton).toBeDisabled();
     })
 
     test('should show error that passwords do no match', async ({ page }) => {
-      await page.fill('input[name="password"]', 'Password123')
-      await page.fill('input[name="repeatPassword"]', 'Password321')
-      await page.click('body')
-      await expect(page.locator('text=Passwords do not match')).toBeVisible()
-      await expect(page.getByRole('button', { name: 'Register' })).toBeDisabled()
+    const registration = new Registration(page);
+    await registration.passwordInput.fill('Password123');
+    await registration.repeatPasswordInput.fill('Password321');
+    await page.click('body');
+    await expect(registration.passwordMismatchError).toBeVisible();
+    await expect(registration.registerButton).toBeDisabled();
     })
 
     test('should keep register button disabled if only one field is filled', async ({ page }) => {
-      await page.fill('input[name="name"]', 'John')
-      await expect(page.getByRole('button', { name: 'Register' })).toBeDisabled()
+    const registration = new Registration(page);
+    await registration.firstNameInput.fill('John');
+    await expect(registration.registerButton).toBeDisabled();
     })
 })
