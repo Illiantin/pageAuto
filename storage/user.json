@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "sid",
+      "value": "s%3A8zNyGU0_xaMLWHYL4mc3uGDOKIztwWrY.K84EHkS7xYlD1ph7xF%2B%2FE9T%2BlfMrKWO%2BignHu6Mq%2BPg",
+      "domain": ".forstudy.space",
+      "path": "/",
+      "expires": 1742852774,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "None"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.youtube.com",
+      "localStorage": [
+        {
+          "name": "ytidb::LAST_RESULT_ENTRY_KEY",
+          "value": "{\"data\":{\"hasSucceededOnce\":true},\"expiration\":1745358373831,\"creation\":1742766373831}"
+        }
+      ]
+    }
+  ]
+}
